@@ -2,6 +2,8 @@
 import { computed, onMounted, reactive, ref, Ref } from 'vue'
 import SvgTranslation from '@/assets/translation.svg'
 import SvgLoading from '@/assets/loading.svg'
+import { YiParamsPayload } from '@/types'
+import UseTextArea from '@/components/textarea.vue'
 
 const lang = reactive({
   from: 'en',
@@ -16,18 +18,18 @@ const TEXT_FROM: Record<string, string> = {
 const toValue = ref('')
 const fromValue = ref('')
 
-const refInput: Ref<HTMLElement> = ref(null) as any
+const refTextarea: Ref<HTMLElement> = ref(null) as any
 onMounted(() => {
-  refInput.value.focus()
+  refTextarea.value.focus()
 })
 
 const bodyPost = computed(() => {
-  const body = {
+  const body: YiParamsPayload = {
     text: fromValue.value,
     from: lang.from,
     to: lang.to
   }
-  
+
   if (import.meta.env.DEV) {
     Object.assign(body, {
       dev: 'dev'
@@ -39,28 +41,35 @@ const bodyPost = computed(() => {
 
 const loading = ref(false)
 const startTranslate = () => {
+  if (loading.value) return
+  
   if (!fromValue.value) {
     toValue.value = ''
     return
   }
-  
-  if (loading.value) return
 
   ;loading.value = true
-  fetch(`https://translate.junxio220.workers.dev`, {
+  
+  fetch('https://translate.junxio220.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(bodyPost.value)
   })
     .then(response => {
-      if (!response.ok) {
+      if (response.ok) {
+        return response.json()
+      } else {
         throw new Error('Network response was not ok ' + response.statusText);
       }
-      return response.json()
+      
     })
     .then(data => {
       if (data) {
-        toValue.value = data?.response?.translated_text || ''
+        let val = data?.response?.text
+        if (Array.isArray(val)) {
+          val = val.join('/')
+        }
+        toValue.value = val ?? ''
       }
     })
     .catch(error => {
@@ -79,63 +88,66 @@ const turnLang = () => {
     lang.from = 'en'
     lang.to = 'zh'
   }
+  startTranslate()
 }
 
 </script>
 
 <template>
-  <div>
-    <div class="font-mono text-sm text-black/30 font-bold my-6">
-      译 | from {{ TEXT_FROM[lang.from] }}
-    </div>
+  <div class="flex flex-col items-center">
+    <h1 class="font-mono text-3xl text-black font-bold">
+      Yi & 译
+    </h1>
     
     <div class="to">
-      <img v-if="loading" class="max-w-[88px]" :src="SvgLoading" />
-      <template v-else>
-        {{ toValue }}
-      </template>
-    </div>
-    
-    <div class="flex justify-center my-8 cursor-pointer" @click="turnLang">
-      <img :src="SvgTranslation" />
-    </div>
-    
-    <div class="font-mono text-sm text-black/30 font-bold my-6">
-      to {{ TEXT_FROM[lang.to] }}
+      <TransitionGroup name="fade">
+        <img v-if="loading" class="max-w-[88px]" :src="SvgLoading" />
+        <div v-if="!loading" class="underline decoration-dotted">
+          {{ toValue }}
+        </div>
+      </TransitionGroup>
     </div>
     
     <div class="from">
-      <input
-        ref="refInput"
-        class="border-b border-b-gray-200 border-solid"
-        v-model="fromValue"
-      />
+      <UseTextArea
+        ref="refTextarea"
+        v-model:value="fromValue"
+        label-submit="翻译"
+        :disabled="loading"
+        @submit="startTranslate"
+      >
+        <template #action>
+          <div class="btn-turn" @click="turnLang">
+            <div class="text-black">{{ TEXT_FROM[lang.from] }}</div>
+            <img class="mx-2" :src="SvgTranslation" />
+            <div class="text-black">{{ TEXT_FROM[lang.to] }}</div>
+          </div>
+        </template>
+      </UseTextArea>
     </div>
-    
-    <button :disable="loading || !fromValue" class="btn-tran" @click="startTranslate">
-      翻译
-    </button>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.to,
 .from {
-  @apply text-center font-serif text-5xl text-black;
-  
-  input {
-    @apply w-auto min-w-[2em] inline-block focus:border-b-gray-400;
-    @apply text-5xl text-center outline-none px-2;
-  }
+  @apply w-[360px];
+}
+
+.to, .from {
+  @apply sm:w-[520px];
+}
+
+.to {
+  @apply my-12;
 }
 
 .btn-tran {
-  @apply my-12 text-sm border-solid border border-black text-black px-5 py-1 bg-transparent rounded-sm active:border-gray-500 active:text-gray-500;
-  @apply transition-all;
-  @apply active:translate-y-0.5;
+  @apply my-12 border-solid border border-black text-black px-5 py-1 bg-transparent rounded-sm;
+  @apply active:border-gray-500 active:text-gray-500;
+  @apply transition-all active:translate-y-0.5;
 }
 
-img {
-  @apply inline-block box-content;
+.btn-turn {
+  @apply cursor-pointer flex justify-center items-center;
 }
 </style>
