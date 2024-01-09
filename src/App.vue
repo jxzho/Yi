@@ -129,11 +129,8 @@ const turnLang = () => {
 </template>
 
 <style lang="scss" scoped>
-.from {
-  @apply w-[360px];
-}
-
 .to, .from {
+  @apply w-[360px];
   @apply sm:w-[520px];
 }
 
