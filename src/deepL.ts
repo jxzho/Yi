@@ -26,9 +26,6 @@ export const yiDeepL = (p: YiParamsPayload) => {
         throw new Error('Network response was not ok ' + response.statusText); 
       }
     })
-    .then(data => {
-      // console.log('=>> data', data)
-    })
     .catch(error => {
       console.error('There has been a problem with your fetch operation:', error);
     })
