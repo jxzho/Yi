@@ -24,7 +24,7 @@ body {
   min-height: 100vh;
 }
 
-img {
+img, svg {
   @apply inline-block box-content;
 }
 
