@@ -56,6 +56,7 @@ img, svg {
   opacity: 0;
 }
 
-.fade-enter-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: .35s ease;
 }

@@ -118,13 +118,18 @@ function copyTextToClipboard (text: string) {
   
   return false
 }
+
+let _timerToast: any
 const startCopy = () => {
   if (toValue.value) {
+    clearTimeout(_timerToast)
+
     const flag = copyTextToClipboard(toValue.value)
     toastData.messages = flag ? '已复制结果' : '请尝试手动复制'
     toastData.type = flag ? 'success' : 'warning'
     toastData.visible = true
-    setTimeout(() => {
+
+    _timerToast = setTimeout(() => {
       toastData.messages = ''
       toastData.visible = false
     }, 2000)
