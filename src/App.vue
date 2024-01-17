@@ -146,7 +146,7 @@ const startCopy = () => {
     </h1>
     
     <div class="to">
-      <TransitionGroup name="fade" mode="in-out">
+      <TransitionGroup name="fade">
         <img v-if="loading" class="svg-loading" :src="SvgLoading" />
         <div
           v-if="toValue"
