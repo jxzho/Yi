@@ -5,6 +5,7 @@ import SvgLoading from '@/assets/loading.svg'
 import { YiParamsPayload } from '@/types'
 import UseTextArea from '@/components/textarea.vue'
 import Toast from '@/components/toast.vue'
+import { escapeHTML } from '@/utils'
 
 const lang = reactive({
   from: 'en',
@@ -145,10 +146,14 @@ const startCopy = () => {
     </h1>
     
     <div class="to">
-      <TransitionGroup name="fade">
-        <img v-if="loading" class="max-w-[88px]" :src="SvgLoading" />
-        <div v-if="!loading && toValue" class="underline decoration-dotted">
-          {{ toValue }}
+      <TransitionGroup name="fade" mode="in-out">
+        <img v-if="loading" class="svg-loading" :src="SvgLoading" />
+        <div
+          v-if="toValue"
+          class="inline-block underline decoration-dotted whitespace-pre-line text-left transition-all"
+          :class="{ 'blur-sm': loading }"
+        >
+          {{ escapeHTML(toValue) }}
           <i class="icon-copy" @click="startCopy">
             <svg width="18" height="18" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 12.432v-4.62A2.813 2.813 0 0 1 15.813 5h24.374A2.813 2.813 0 0 1 43 7.813v24.375A2.813 2.813 0 0 1 40.187 35h-4.67" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M32.188 13H7.811A2.813 2.813 0 0 0 5 15.813v24.374A2.813 2.813 0 0 0 7.813 43h24.375A2.813 2.813 0 0 0 35 40.187V15.814A2.813 2.813 0 0 0 32.187 13z" stroke="#333" stroke-width="2" stroke-linejoin="round"/></svg>
           </i>
@@ -192,7 +197,11 @@ const startCopy = () => {
 }
 
 .to {
-  @apply my-12;
+  @apply my-12 relative min-h-[1.5em];
+  
+  .svg-loading {
+    @apply max-w-[88px] absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2;
+  }
 }
 
 .btn-tran {
@@ -206,6 +215,6 @@ const startCopy = () => {
 }
 
 .icon-copy {
-  @apply inline-block ml-1.5 cursor-pointer;
+  @apply inline-block ml-1.5 cursor-pointer -mr-[calc(18px+0.375rem)];
 }
 </style>
