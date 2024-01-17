@@ -4,7 +4,4 @@ A personal translator.
 
 ## Usage
 
-<video width="520" height="auto" controls>
-  <source src="https://ik.imagekit.io/junxio/video/demo-yi.mp4" type="video/mp4">
-  Demo Link: https://ik.imagekit.io/junxio/video/demo-yi.mp4
-</video>
+https://github.com/jxzho/Yi/assets/37285048/ca4cf784-bcf8-47f4-adda-d3b946d075e3
