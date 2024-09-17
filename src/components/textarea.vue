@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-    <div class="p-2 bg-white rounded-t-lg dark:bg-gray-800">
+  <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
+    <div class="p-2 bg-white rounded-t-lg">
       <textarea
         rows="5"
-        class="use-textarea-content font-serif w-full py-2 px-3 text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+        class="use-textarea-content font-serif w-full py-2 px-3 text-gray-900 bg-white border-0 focus:ring-0"
         placeholder="待输入..."
         required
         maxlength="10000"
@@ -13,13 +13,13 @@
       ></textarea>
     </div>
     <div
-      class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600"
+      class="flex items-center justify-between px-3 py-2 border-t"
     >
       <slot name="action">
         <div class="flex ps-0 space-x-1 rtl:space-x-reverse sm:ps-2">
           <!-- <button
             type="button"
-            class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
           >
             <svg
               class="w-4 h-4"
@@ -39,7 +39,7 @@
           </button>
           <button
             type="button"
-            class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
           >
             <svg
               class="w-4 h-4"
@@ -56,7 +56,7 @@
           </button>
           <button
             type="button"
-            class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+            class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
           >
             <svg
               class="w-4 h-4"
@@ -76,7 +76,7 @@
       <button
         type="submit"
         :disabled="disabled"
-        class="inline-flex items-center py-2 px-5 text-sm text-center text-black rounded-lg border border-solid border-gray-300 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-gray-200"
+        class="inline-flex items-center py-2 px-5 text-sm text-center text-black rounded-lg border border-solid border-gray-300 focus:ring-2 focus:ring-blue-200 hover:bg-gray-200"
         :class="{ 'cursor-not-allowed': disabled }"
         @click="startSubmit"
       >
