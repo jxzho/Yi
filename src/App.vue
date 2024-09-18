@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, Ref } from 'vue'
+import { computed, reactive, ref, provide } from 'vue'
 import SvgTranslation from '@/assets/translation.svg'
 import SvgLoading from '@/assets/loading.svg'
 import { YiParamsPayload } from '@/types'
 import UseTextArea from '@/components/textarea.vue'
 import Toast from '@/components/toast.vue'
-import { escapeHTML } from '@/utils'
+import { escapeHTML, copyTextToClipboard } from '@/utils'
+import { useTextareaFocused } from '@/use'
 
-const lang = reactive({
-  from: 'en',
-  to: 'zh'
-})
+let _timerToast: any
 
 const TEXT_FROM: Record<string, string> = {
   en: '英',
@@ -20,10 +18,27 @@ const TEXT_FROM: Record<string, string> = {
 const toValue = ref('')
 const fromValue = ref('')
 
-const refTextarea: Ref<HTMLElement> = ref(null) as any
-onMounted(() => {
-  refTextarea.value.focus()
+const lang = reactive({
+  from: 'en',
+  to: 'zh'
 })
+
+const toastData = reactive<{
+  type: 'success' | 'warning'
+  visible: boolean
+  messages: string
+}>({
+  type: 'success',
+  visible: false,
+  messages: ''
+})
+
+const searchLog = ref(new Map<string, string>())
+
+const loading = ref(false)
+
+/** Define ref input-textarea */
+const { refTextarea } = useTextareaFocused()
 
 const bodyPost = computed(() => {
   const body: YiParamsPayload = {
@@ -41,8 +56,7 @@ const bodyPost = computed(() => {
   return body
 })
 
-const loading = ref(false)
-const startTranslate = () => {
+function startTranslate () {
   if (loading.value) return
   
   if (!fromValue.value) {
@@ -73,6 +87,8 @@ const startTranslate = () => {
           val = val.join('/')
         }
         toValue.value = val ?? ''
+
+        searchLog.value.set(fromValue.value, toValue.value)
       }
     })
     .catch(error => {
@@ -83,7 +99,16 @@ const startTranslate = () => {
     })
 }
 
-const turnLang = () => {
+
+function onSelectLog (log_key: string) {
+  const log = searchLog.value.get(log_key)
+  if (log_key && log) {
+    fromValue.value = log_key
+    toValue.value = log
+  }
+}
+
+function turnLang () {
   if (lang.from === 'en') {
     lang.from = 'zh'
     lang.to = 'en'
@@ -94,34 +119,7 @@ const turnLang = () => {
   startTranslate()
 }
 
-const toastData = reactive({
-  type: 'success',
-  visible: false,
-  messages: ''
-})
-function copyTextToClipboard (text: string) {
-  var textArea = document.createElement('textarea')
-  textArea.value = text
-  textArea.style.position = 'fixed'
-  textArea.style.top = '0'
-  textArea.style.left = '0'
-  textArea.style.opacity = '0'
-
-  document.body.appendChild(textArea)
-  textArea.focus()
-  textArea.select()
-
-  try {
-    return document.execCommand('copy')
-  }
-  catch (err) {}
-  finally { document.body.removeChild(textArea) }
-  
-  return false
-}
-
-let _timerToast: any
-const startCopy = () => {
+function startCopy () {
   if (toValue.value) {
     clearTimeout(_timerToast)
 
@@ -137,6 +135,7 @@ const startCopy = () => {
   }
 }
 
+provide('searchLog', searchLog)
 </script>
 
 <template>
@@ -168,6 +167,7 @@ const startCopy = () => {
         label-submit="翻译"
         :disabled="loading"
         @submit="startTranslate"
+        @select-log="onSelectLog"
       >
         <template #action>
           <div class="btn-turn" @click="turnLang">
