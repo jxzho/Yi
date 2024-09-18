@@ -4,4 +4,4 @@ A personal translator.
 
 ## Usage
 
-https://github.com/jxzho/Yi/assets/37285048/ca4cf784-bcf8-47f4-adda-d3b946d075e3
+https://github.com/user-attachments/assets/66a3e9b1-ac2f-44e1-94db-11c77fcb75a4
